@@ -1,0 +1,54 @@
+/* 
+
+FizzBuzz – założenia zadania
+
+Opis problemu
+Zaimplementuj funkcję, która dla podanej liczby całkowitej n zwraca odpowiedni tekst zgodnie z regułami FizzBuzz.
+
+Wejście: Liczba całkowita n
+
+Wyjście: String (str / character), będący wynikiem transformacji liczby n
+
+Reguły:
+
+*Jeśli n jest podzielne przez 3 i 5 → zwróć "FizzBuzz"
+*Jeśli n jest podzielne tylko przez 3 → zwróć "Fizz"
+*Jeśli n jest podzielne tylko przez 5 → zwróć "Buzz"
+*W przeciwnym przypadku → zwróć wartość n jako string
+
+*/
+
+
+input_data:
+
+LOAD * Inline[
+n
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+15
+30
+];
+
+result:
+
+LOAD
+	n AS input
+	,If(Mod(n,15) = 0,'FizzBuzz',
+		If(Mod(n,3) = 0,'Fizz',
+			If(Mod(n,5) = 0,'Buzz',
+				Text(n)
+			)
+		)
+	) AS result
+	
+Resident input_data;
+drop table input_data
+;
