@@ -1,0 +1,37 @@
+//|-------------------------------|
+//| Generowanie listy dat         |
+//|-------------------------------|
+
+// Przykładowa tabela data_frame zawiera dane dotyczące  artykułów wraz z polem created_date
+
+// Na podstawie zawartości tabeli należy wygenerować listę, która posłuży jako pomoc do dalszej analizy danych
+
+// Lista ma spełniać następujące warunki:
+// * lista ma zawierać daty końca minionych miesięcy + datę wczorajszą
+// * jeżeli data wczorajsza jest datą końca miesiąca, to nie może się duplikować,
+// * punktem startowym listy ma być najmniejsza data w polu created_date
+
+
+// 1. Pobieramy najmniejszą datę z pola created_at
+Temp_Date: 
+LOAD Min(created_date) as MinDate RESIDENT data_frame;
+
+// Używamy Floor, aby pozbyć się czasu i mieć czystą liczbę całkowitą
+LET vMinDate = Num(Floor(Peek('MinDate', 0, 'Temp_Date')));
+LET vYesterday = Num(Floor(Today() - 1));
+
+DROP TABLE Temp_Date;
+
+// 2. Generowanie listy
+ListaDat:
+// 2.2 Odfiltruj wygenerowaną listę, by spełniała zadane warunki
+LOAD 
+    Date(Data_Num) as Lista_Dat
+WHERE Day(Data_Num + 1) = 1  // Jeśli jutro jest 1-szy, to dziś jest koniec miesiąca
+   OR Data_Num = $(vYesterday);
+
+//  2.1 Generuj listę dat od daty początkowej do wczoraj
+LOAD 
+    $(vMinDate) + IterNo() - 1 as Data_Num
+AUTOGENERATE 1
+WHILE $(vMinDate) + IterNo() - 1 <= $(vYesterday);
