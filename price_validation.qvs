@@ -17,8 +17,8 @@ LOAD
         )
     ) AS promo_type,
 
-    IF(invoice_price = individual_price, 1, 0) AS validation_result
-;
+    IF(invoice_price = individual_price, 1, 0) AS validation_result;
+
 LOAD
     *,
     ROUND((1 - individual_price / regular_price), 0.01) * 100 AS discount_percent
